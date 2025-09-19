@@ -54,41 +54,16 @@
 
   <script>
     (function(){
-      // Read params coming from Zoho Bookings redirect URL
       const qs = new URLSearchParams(window.location.search);
       const service = qs.get('service') || qs.get('service_name') || qs.get('s') || '';
       const consultant = qs.get('consultant') || qs.get('consultant_name') || qs.get('staff') || qs.get('staff_name') || qs.get('c') || '';
-      const start = qs.get('start') || qs.get('start_time') || qs.get('appointment_start') || '';
-      const bookingId = qs.get('booking_id') || qs.get('appointment_id') || '';
-
       const line = document.getElementById('mainline');
 
-      // Build main sentence
       const parts = [];
       if (service) parts.push(`for <strong>${service}</strong>`);
       if (consultant) parts.push(`with <strong>${consultant}</strong>`);
+
       line.innerHTML = parts.length ? `Your appointment ${parts.join(' ')} is confirmed.` : 'Your appointment is confirmed.';
-
-      // Optional details block
-      const details = [];
-      if (start) {
-        try {
-          const d = new Date(start);
-          // If it's a valid date, format it. Otherwise show raw.
-          if (!isNaN(d)) {
-            details.push(`${d.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })} at ${d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' })}`);
-          } else {
-            details.push(start);
-          }
-        } catch(e){ details.push(start); }
-      }
-      if (bookingId) details.push(`ID: ${bookingId}`);
-
-      if (details.length) {
-        const p = document.createElement('p');
-        p.innerHTML = details.join(' · ');
-        line.insertAdjacentElement('afterend', p);
-      }
 
       document.getElementById('year').textContent = new Date().getFullYear();
     })();

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointment Confirmed</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      text-align: center;
+      padding: 40px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #4a3aff;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .logo {
+      margin-bottom: 20px;
+    }
+    .logo img {
+      max-width: 200px;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://elevateteams.io/wp-content/uploads/2024/04/logo-ET-2.png" alt="Elevate Teams Logo">
+    </div>
+    <h1>Appointment Confirmed</h1>
+    <p id="mainline">Your appointment is confirmed.</p>
+    <p>We’ll send you the details by email. Thank you for choosing Elevate Teams!</p>
+    <footer>&copy; <span id="year"></span> Elevate Teams</footer>
+  </div>
+
+  <script>
+    (function(){
+      // Read params coming from Zoho Bookings redirect URL
+      const qs = new URLSearchParams(window.location.search);
+      const service = qs.get('service') || qs.get('service_name') || qs.get('s') || '';
+      const consultant = qs.get('consultant') || qs.get('consultant_name') || qs.get('staff') || qs.get('staff_name') || qs.get('c') || '';
+      const start = qs.get('start') || qs.get('start_time') || qs.get('appointment_start') || '';
+      const bookingId = qs.get('booking_id') || qs.get('appointment_id') || '';
+
+      const line = document.getElementById('mainline');
+
+      // Build main sentence
+      const parts = [];
+      if (service) parts.push(`for <strong>${service}</strong>`);
+      if (consultant) parts.push(`with <strong>${consultant}</strong>`);
+      line.innerHTML = parts.length ? `Your appointment ${parts.join(' ')} is confirmed.` : 'Your appointment is confirmed.';
+
+      // Optional details block
+      const details = [];
+      if (start) {
+        try {
+          const d = new Date(start);
+          // If it's a valid date, format it. Otherwise show raw.
+          if (!isNaN(d)) {
+            details.push(`${d.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })} at ${d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' })}`);
+          } else {
+            details.push(start);
+          }
+        } catch(e){ details.push(start); }
+      }
+      if (bookingId) details.push(`ID: ${bookingId}`);
+
+      if (details.length) {
+        const p = document.createElement('p');
+        p.innerHTML = details.join(' · ');
+        line.insertAdjacentElement('afterend', p);
+      }
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
